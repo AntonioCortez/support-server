@@ -47,10 +47,16 @@ class GetTicketStaffController extends Controller {
         $closed = Controller::request('closed');
         $page = Controller::request('page');
         $departmentId = Controller::request('departmentId');
+        $title = Controller::request('title');
         $offset = ($page-1)*10;
 
         $condition = 'TRUE';
         $bindings = [];
+
+        if($title) {
+            $condition .= " AND title LIKE ?";
+            $bindings[] = "%{$title}%";
+        }
 
         if($departmentId) {
             $condition .= ' AND department_id = ?';
