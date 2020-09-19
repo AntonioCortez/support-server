@@ -54,7 +54,7 @@ class GetTicketStaffController extends Controller {
         $bindings = [];
 
         if($title) {
-            $condition .= " AND title LIKE ?";
+            $condition .= "AND title LIKE ?";
             $bindings[] = "%{$title}%";
         }
 
@@ -63,9 +63,9 @@ class GetTicketStaffController extends Controller {
             $bindings[] = $departmentId;
         }
 
-        if(!$closed) {
+        if($closed) {
             $condition .= ' AND closed = ?';
-            $bindings[] = '0';
+            $bindings[] = $closed;
         }
 
         $countTotal = $user->withCondition($condition, $bindings)->countShared('ticket');
