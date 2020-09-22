@@ -48,7 +48,8 @@ class GetTicketStaffController extends Controller {
         $page = Controller::request('page');
         $departmentId = Controller::request('departmentId');
         $title = Controller::request('title');
-        $offset = ($page-1)*10;
+        $rpp = Controller::request('rpp');
+        $offset = ($page-1)*($rpp*1);
 
         $condition = 'TRUE';
         $bindings = [];
@@ -70,15 +71,19 @@ class GetTicketStaffController extends Controller {
 
         $countTotal = $user->withCondition($condition, $bindings)->countShared('ticket');
 
-        $condition .= ' LIMIT 10 OFFSET ?';
+        $condition .= ' LIMIT ?';
+        $bindings[] = $rpp*1;
+        $condition .= ' OFFSET ?';
         $bindings[] = $offset;
+
+        //echo(" php.get-tickets: ".var_dump($condition));
 
         $tickets = $user->withCondition($condition, $bindings)->sharedTicketList->toArray(true);
 
         Response::respondSuccess([
             'tickets' => $tickets,
             'page' => $page,
-            'pages' => ceil($countTotal / 10)
+            'pages' => ceil($countTotal / ($rpp*1))
         ]);
     }
 }
